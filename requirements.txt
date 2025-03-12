@@ -1,0 +1,11 @@
+--index https://pypi.org/simple/
+sphinx_rtd_theme
+recommonmark
+sphinx-markdown-tables
+rayvision_log
+rayvision_api
+rayvision_utils
+rayvision_sync
+rayvision_maya
+rayvision_clarisse
+rayvision_houdini
