@@ -154,7 +154,7 @@ parameters:
 config_bid str   Y                      30201              Transfer Configuration ID
 input_bid  str   Y                      10206              storage ID
 output_bid str   Y                      20201              downloading ID
-domain     str   Y                      task.renderbus.com domain name
+domain     str   Y                      jop.foxrenderfarm.com domain name
 platform   str   Y                      2                  platform ID
 local_os   str   Y                      windows            os, now support "window" and "linux"
 user_id    str   Y                      100150764          user account ID
