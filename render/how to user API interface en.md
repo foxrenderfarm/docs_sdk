@@ -272,8 +272,8 @@ user_transfer_bid = api.user.get_transfer_bid()
         "output_bid": "20201",
         "parent_input_bid": "10202",
         "sub_user_output_bids": [{
-            userId:"119776",
-            outputBid:"10401"
+            "userId":"119776",
+            "outputBid":"10401"
         }]
 	},
     "serverTime": 1535957964631
@@ -2536,7 +2536,7 @@ ids = api.query.get_small_task_id(task_id=1521323)
 
 **Example of request**：
 
-```json
+```Python
 hardware_config = api.user.get_hardware_config(task_ids=["6306543"])
 ```
 
@@ -2607,3 +2607,36 @@ hardware_config = api.user.get_hardware_config(task_ids=["6306543"])
 ]
 ```
 
+##  Get Pack Node Info
+
+**Interface path**：/api/render/submit/getUserPackNodeInfo
+
+**Request parameter**：No
+
+**Example of request**：
+
+```Python
+pack_node_info = api.query.get_pack_node_info()
+```
+
+**Return parameter[data]**：
+
+| Parameter| Type | Description|
+| ----- | ---- |------------|
+| packNodeId| int  | pack not id |
+| packName | String| pack node name |
+
+**Example of return**：
+
+```json
+[
+  {
+    "packNodeId": 809,
+    "packName": "plan1"
+  },
+  {
+    "packNodeId": 811,
+    "packName": "plan2"
+  }
+]
+```
