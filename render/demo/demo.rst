@@ -611,52 +611,25 @@ Arnorld Standalone demo
 
  ::
 
-    import os
-    import sys
-    import time
+ ::
+
     from rayvision_api.core import RayvisionAPI
     from rayvision_sync.upload import RayvisionUpload
     from rayvision_sync.download import RayvisionDownload
     from rayvision_api.task.check import RayvisionCheck
     from rayvision_api.utils import update_task_info, append_to_task, append_to_upload
-    from rayvision_utils import utils, constants
 
-
-    def write_config_json(analyze_info):
-        """The initialization task.json."""
-        workspace_temp = os.path.join(analyze_info.get('workspace'), str(int(time.time())))
-        task_json = os.path.join(workspace_temp, 'task.json')
-        upload_json = os.path.join(workspace_temp, 'upload.json')
-        if not os.path.exists(workspace_temp):
-            os.makedirs(workspace_temp, exist_ok=True)
-        constants.TASK_INFO["task_info"]["input_cg_file"] = analyze_info.get('cg_file').replace("\\", "/")
-        constants.TASK_INFO["task_info"]["project_name"] = analyze_info.get('project_name')
-        constants.TASK_INFO["task_info"]["cg_id"] = '2003'
-        constants.TASK_INFO["task_info"]["os_name"] = "1" if "win" in sys.platform.lower() else "0"
-        constants.TASK_INFO["task_info"]["platform"] = analyze_info.get('platform')
-        constants.TASK_INFO["software_config"] = {
-            "plugins": analyze_info.get('plugin_config'),
-            "cg_version": analyze_info.get('software_version'),
-            "cg_name": 'Arnold Standalone'
-        }
-        constants.TASK_INFO["scene_info"] = constants.TASK_INFO["scene_info_render"] = {
-            "common": {
-                "frames": analyze_info.get('render_frames')
-                }
-        }
-
-        utils.json_save(task_json, constants.TASK_INFO)
-        if not os.path.exists(upload_json):
-            utils.json_save(upload_json, {"asset": []})
-        return task_json, upload_json
-
-    # ***** API Flow *****
     # API Parameter
     render_para = {
-        "domain": "jop.foxrenderfarm.com",  # If it doesn't work, you can use "task.foxrenderfarm.com"
+        "domain": "task.foxrenderfarm.com",  # If it doesn't work, you can use "task.foxrenderfarm.com"
         "platform": "62",
         "access_id": "xxxxx",
         "access_key": "xxxxx",
+    }
+
+    CONFIG_PATH = {
+        "task_json_path": r"D:\test\task.json",
+        "upload_json_path": r"D:\test\upload.json"
     }
 
     api = RayvisionAPI(access_id=render_para['access_id'],
@@ -664,33 +637,23 @@ Arnorld Standalone demo
                        domain=render_para['domain'],
                        platform=render_para['platform'])
 
-    # Scene Parameter
-    analyze_info = {
-        "cg_file": r"D:\ys\render_scene\arnold_standa\Arnold_Standalone_V7220.0001.ass",
-        "workspace": r"D:\ys\workspace\arnold_standalone",
-        "software_version": "7.2.2.0",
-        "project_name": "Project1",
-        "plugin_config": {},
-        "render_frames": "1-3[1]",
-        "platform": render_para['platform']
-    }
 
     # Step1: Add some custom parameters, or update the original parameter value
     # Step1 can also be set without setting
-    task_json, upload_json = write_config_json(analyze_info)
     update_task = {
-        "pre_frames": "000",
-        "stop_after_test": "1",
+        "pre_frames": "000:2,4,6-10[1]",
+        "stop_after_test": "1"
     }
-    update_task_info(update_task, task_json)
+    update_task_info(update_task, CONFIG_PATH['task_json_path'])
 
     custom_info_to_task = {}
-    append_to_task(custom_info_to_task, task_json)
+    append_to_task(custom_info_to_task, CONFIG_PATH['task_json_path'])
 
     custom_info_to_upload = [
-        r"D:\ys\render_scene\arnold_standa\Arnold_Standalone_V7220.0001.ass"
+        r"E:\fang\ass_test\static_ass.ass",
+        r"E:\fang\ass_test\animation_ass.0060.ass"
     ]
-    append_to_upload(custom_info_to_upload, upload_json)
+    append_to_upload(custom_info_to_upload, CONFIG_PATH['upload_json_path'])
 
     # Step2: Set platform hardware configuration information. (Multiple models can be entered; Default is to select all)
     hardware_config = {
@@ -701,16 +664,20 @@ Arnorld Standalone demo
 
     # Step3:Check json files
     check_obj = RayvisionCheck(api)
-    api.task._generate_task_id()
-    task_id = check_obj.execute(hardware_config, task_json)
+    task_id = check_obj.execute(hardware_config, CONFIG_PATH['task_json_path'])
 
-    # Step4: Transmission task.json files and resources are uploaded separately
+
+    # Step4: Transmission
+    """
+    task.json files and resources are uploaded separately
+    """
     upload_obj = RayvisionUpload(api)
 
     # Step4.1: Upload resource file(upload.json)
-    upload_obj.upload_asset(upload_json_path=upload_json, engine_type="raysyncproxy")
+    upload_obj.upload_asset(upload_json_path=CONFIG_PATH["upload_json_path"])
     # Step4.2: Upload task.json
-    upload_obj.upload_config(str(task_id), [task_json], engine_type="raysyncproxy")
+    upload_obj.upload_config(str(task_id), list(CONFIG_PATH.values()))
+
 
     # Step5:Submit Task
     api.submit(int(task_id))
@@ -718,6 +685,7 @@ Arnorld Standalone demo
     # Step6:Download
     download = RayvisionDownload(api)
     # All complete before the automatic start of uniform download.
-    download.auto_download_after_task_completed([task_id], engine_type="raysyncproxy")
+    download.auto_download_after_task_completed([task_id])
     # Poll download (automatic download for each completed frame)
-    download.auto_download([int(task_id)], local_path=r"D:\test", download_filename_format="false", engine_type="raysyncproxy")
+    download.auto_download([int(1484947)], local_path=r"E:\test", download_filename_format="false")
+
