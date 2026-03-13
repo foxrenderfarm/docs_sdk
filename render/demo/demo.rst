@@ -611,8 +611,6 @@ Arnorld Standalone demo
 
  ::
 
- ::
-
     from rayvision_api.core import RayvisionAPI
     from rayvision_sync.upload import RayvisionUpload
     from rayvision_sync.download import RayvisionDownload
