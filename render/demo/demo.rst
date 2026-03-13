@@ -619,7 +619,7 @@ Arnorld Standalone demo
 
     # API Parameter
     render_para = {
-        "domain": "task.foxrenderfarm.com",  # If it doesn't work, you can use "task.foxrenderfarm.com"
+        "domain": "jop.foxrenderfarm.com",  # If it doesn't work, you can use "task.foxrenderfarm.com"
         "platform": "62",
         "access_id": "xxxxx",
         "access_key": "xxxxx",
